@@ -16,12 +16,28 @@ costs credits or money: confirm first.
 2. Spot-check the built pages render and compute correctly.
 
 ## On operator go: deploy to Cloudflare Pages
-- Next.js App Router on Cloudflare Pages uses the `@cloudflare/next-on-pages`
-  adapter (the `/api/leads` route runs on the edge runtime — already set).
-- Configure the build command and output per the adapter's docs.
-- Set environment variables (`DATABASE_URL`, `LEAD_NOTIFY_EMAIL`,
-  `NEXT_PUBLIC_SITE_URL`) in the Cloudflare project.
-- Verify the deployed URL: pages load, estimate computes, a test lead submits.
+The `@cloudflare/next-on-pages` adapter is already installed and the build is
+verified locally (`npm run pages:build` produces `.vercel/output/static`). The
+`/api/leads` route runs on the edge runtime; the pages are prerendered.
+
+**Exact Cloudflare Pages project settings** (Workers & Pages > create > Pages >
+connect to the GitHub repo):
+- Framework preset: Next.js
+- Build command: `npx @cloudflare/next-on-pages@1`
+- Build output directory: `.vercel/output/static`
+- Environment variables:
+  - `NODE_VERSION` = `20` (or `22`)
+  - `NEXT_PUBLIC_SITE_URL` = the production URL (used by canonical + sitemap)
+  - `DATABASE_URL` = Neon URL (optional now; leads log to console until set)
+  - `LEAD_NOTIFY_EMAIL` = operator notification target (optional now)
+- Compatibility flags: `nodejs_compat` (already in `wrangler.toml`; also set it in
+  the Pages project settings for both Production and Preview if the dashboard asks).
+
+After the first deploy, set `NEXT_PUBLIC_SITE_URL` to the real domain and redeploy
+so canonical tags and the sitemap use it.
+
+- Verify the deployed URL: pages load, estimate computes, sitemap.xml and
+  robots.txt resolve, a test lead POST returns ok.
 
 ## Sitemap + indexing
 - Generate and submit `sitemap.xml` covering the hub and every calculator.
