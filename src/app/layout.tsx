@@ -3,7 +3,7 @@ import Link from 'next/link'
 import './globals.css'
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://ballpark.pages.dev'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://tryballpark.com'),
   title: {
     default: 'Ballpark: Free Settlement Calculators',
     template: '%s',

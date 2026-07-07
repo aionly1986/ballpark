@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { allCalculators } from '@/config/calculators'
 
-const BASE = process.env.NEXT_PUBLIC_SITE_URL || 'https://ballpark.pages.dev'
+const BASE = process.env.NEXT_PUBLIC_SITE_URL || 'https://tryballpark.com'
 
 export const dynamic = 'force-static'
 
