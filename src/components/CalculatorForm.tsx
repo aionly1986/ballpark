@@ -1,94 +1,140 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import type { CalculatorConfig } from '@/lib/types'
-import type { Severity, FaultLevel } from '@/lib/settlement'
+import type { Severity, FaultLevel, SettlementResult } from '@/lib/settlement'
 import { calculateSettlement } from '@/lib/settlement'
 import { negligenceRuleForState, negligenceNoteForState } from '@/lib/negligence'
 import { SelectField, MoneyField, DateField, toNumber } from './fields'
 import ResultCard from './ResultCard'
-import TrustBadge from './TrustBadge'
 
 type Mode = 'simple' | 'advanced'
+
+interface Values {
+  accidentType: string
+  state: string
+  medicalBills: string
+  futureMedical: string
+  lostWages: string
+  futureLostIncome: string
+  propertyDamage: string
+  otherCosts: string
+  severity: Severity
+  faultLevel: FaultLevel
+  dateOfAccident: string
+}
 
 interface CalculatorFormProps {
   config: CalculatorConfig
 }
 
-// Client component. Two modes: Simple (fast, above the fold) and Advanced (more
-// economic line items). Both share one state; the estimate always uses whatever
-// is filled and recomputes instantly.
+// Client component. Two modes (Simple / Advanced). The estimate is computed only
+// when the user presses Calculate (a deliberate action, and the moment we can
+// later surface providers / offers below the result). Changing any input clears
+// the result so the displayed number is never stale.
 export default function CalculatorForm({ config }: CalculatorFormProps) {
   const { labels, presets } = config
   const [mode, setMode] = useState<Mode>('simple')
+  const [result, setResult] = useState<SettlementResult | null>(null)
 
-  const [accidentType, setAccidentType] = useState(presets.accidentType[0].value)
-  const [state, setState] = useState(presets.state[0].value)
-  const [medicalBills, setMedicalBills] = useState('')
-  const [futureMedical, setFutureMedical] = useState('')
-  const [lostWages, setLostWages] = useState('')
-  const [futureLostIncome, setFutureLostIncome] = useState('')
-  const [propertyDamage, setPropertyDamage] = useState('')
-  const [otherCosts, setOtherCosts] = useState('')
-  const [severity, setSeverity] = useState<Severity>(presets.severity[0].value)
-  const [faultLevel, setFaultLevel] = useState<FaultLevel>(presets.faultLevel[0].value)
-  const [dateOfAccident, setDateOfAccident] = useState('')
+  const [values, setValues] = useState<Values>({
+    accidentType: presets.accidentType[0].value,
+    state: presets.state[0].value,
+    medicalBills: '',
+    futureMedical: '',
+    lostWages: '',
+    futureLostIncome: '',
+    propertyDamage: '',
+    otherCosts: '',
+    severity: presets.severity[0].value,
+    faultLevel: presets.faultLevel[0].value,
+    dateOfAccident: '',
+  })
 
-  const result = useMemo(
-    () =>
+  function setField<K extends keyof Values>(key: K, value: Values[K]) {
+    setValues((prev) => ({ ...prev, [key]: value }))
+    setResult(null)
+  }
+
+  function handleCalculate(e: React.FormEvent) {
+    e.preventDefault()
+    setResult(
       calculateSettlement({
-        medicalBills: toNumber(medicalBills),
-        futureMedical: toNumber(futureMedical),
-        lostWages: toNumber(lostWages),
-        futureLostIncome: toNumber(futureLostIncome),
-        propertyDamage: toNumber(propertyDamage),
-        otherCosts: toNumber(otherCosts),
-        severity,
-        faultLevel,
-        negligenceRule: negligenceRuleForState(state),
+        medicalBills: toNumber(values.medicalBills),
+        futureMedical: toNumber(values.futureMedical),
+        lostWages: toNumber(values.lostWages),
+        futureLostIncome: toNumber(values.futureLostIncome),
+        propertyDamage: toNumber(values.propertyDamage),
+        otherCosts: toNumber(values.otherCosts),
+        severity: values.severity,
+        faultLevel: values.faultLevel,
+        negligenceRule: negligenceRuleForState(values.state),
       }),
-    [medicalBills, futureMedical, lostWages, futureLostIncome, propertyDamage, otherCosts, severity, faultLevel, state],
-  )
-
-  const stateNote = negligenceNoteForState(state)
+    )
+  }
 
   return (
     <div className="grid gap-6 lg:grid-cols-5">
       <section className="lg:col-span-3">
-        <div className="rounded-2xl border border-surface-border bg-surface p-6 shadow-card sm:p-8">
+        <form
+          onSubmit={handleCalculate}
+          className="rounded-2xl border border-surface-border bg-surface p-6 shadow-card sm:p-8"
+        >
           <ModeTabs mode={mode} onChange={setMode} />
 
           <div className="mt-6 grid gap-5 sm:grid-cols-2">
-            <SelectField label={labels.accidentType} value={accidentType} onChange={setAccidentType} options={presets.accidentType} />
-            <SelectField label={labels.state} value={state} onChange={setState} options={presets.state} />
+            <SelectField label={labels.accidentType} value={values.accidentType} onChange={(v) => setField('accidentType', v)} options={presets.accidentType} />
+            <SelectField label={labels.state} value={values.state} onChange={(v) => setField('state', v)} options={presets.state} />
 
-            <MoneyField label={labels.medicalBills} value={medicalBills} onChange={setMedicalBills} />
+            <MoneyField label={labels.medicalBills} value={values.medicalBills} onChange={(v) => setField('medicalBills', v)} />
             {mode === 'advanced' && (
-              <MoneyField label={labels.futureMedical} value={futureMedical} onChange={setFutureMedical} />
+              <MoneyField label={labels.futureMedical} value={values.futureMedical} onChange={(v) => setField('futureMedical', v)} />
             )}
-            <MoneyField label={labels.lostWages} value={lostWages} onChange={setLostWages} />
+            <MoneyField label={labels.lostWages} value={values.lostWages} onChange={(v) => setField('lostWages', v)} />
             {mode === 'advanced' && (
               <>
-                <MoneyField label={labels.futureLostIncome} value={futureLostIncome} onChange={setFutureLostIncome} />
-                <MoneyField label={labels.propertyDamage} value={propertyDamage} onChange={setPropertyDamage} />
-                <MoneyField label={labels.otherCosts} value={otherCosts} onChange={setOtherCosts} />
+                <MoneyField label={labels.futureLostIncome} value={values.futureLostIncome} onChange={(v) => setField('futureLostIncome', v)} />
+                <MoneyField label={labels.propertyDamage} value={values.propertyDamage} onChange={(v) => setField('propertyDamage', v)} />
+                <MoneyField label={labels.otherCosts} value={values.otherCosts} onChange={(v) => setField('otherCosts', v)} />
               </>
             )}
 
-            <SelectField label={labels.severity} value={severity} onChange={(v) => setSeverity(v as Severity)} options={presets.severity} />
-            <SelectField label={labels.faultLevel} value={faultLevel} onChange={(v) => setFaultLevel(v as FaultLevel)} options={presets.faultLevel} />
+            <SelectField label={labels.severity} value={values.severity} onChange={(v) => setField('severity', v as Severity)} options={presets.severity} />
+            <SelectField label={labels.faultLevel} value={values.faultLevel} onChange={(v) => setField('faultLevel', v as FaultLevel)} options={presets.faultLevel} />
 
             {mode === 'advanced' && (
-              <DateField label={labels.dateOfAccident} value={dateOfAccident} onChange={setDateOfAccident} />
+              <DateField label={labels.dateOfAccident} value={values.dateOfAccident} onChange={(v) => setField('dateOfAccident', v)} />
             )}
           </div>
-        </div>
+
+          <button
+            type="submit"
+            className="mt-6 w-full rounded-lg bg-ink px-5 py-3 font-semibold text-white transition hover:opacity-90"
+          >
+            Calculate estimate
+          </button>
+        </form>
       </section>
 
       <aside className="lg:col-span-2">
         <div className="lg:sticky lg:top-6">
-          {config.trustBadge && <TrustBadge text={config.trustBadge} />}
-          <ResultCard result={result} note={stateNote} />
+          <p className="mb-4 flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 text-sm font-medium text-ink-faint">
+            <span>Free</span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Instant estimate</span>
+            <span aria-hidden="true">&middot;</span>
+            <span>No email required</span>
+          </p>
+          {result ? (
+            <ResultCard result={result} note={negligenceNoteForState(values.state)} />
+          ) : (
+            <div className="rounded-2xl border border-dashed border-surface-border bg-surface p-6 text-center sm:p-10">
+              <p className="text-sm leading-6 text-ink-faint">
+                Your estimated range will appear here. Fill in your details and press
+                Calculate.
+              </p>
+            </div>
+          )}
         </div>
       </aside>
     </div>

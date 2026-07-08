@@ -6,6 +6,7 @@ import { faqSchema, webAppSchema } from '@/lib/schema'
 import CalculatorForm from '@/components/CalculatorForm'
 import ExampleEstimates from '@/components/ExampleEstimates'
 import FaqSection from '@/components/FaqSection'
+import TrustBadge from '@/components/TrustBadge'
 
 interface PageProps {
   params: Promise<{ calculator: string }>
@@ -46,13 +47,11 @@ export default async function CalculatorPage({ params }: PageProps) {
       />
 
       <div className="mb-8 max-w-content">
-        <p className="mb-3 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-sm font-medium text-ink-faint">
-          <span>Free</span>
-          <span aria-hidden="true">&middot;</span>
-          <span>Instant estimate</span>
-          <span aria-hidden="true">&middot;</span>
-          <span>No email required</span>
-        </p>
+        {config.trustBadge && (
+          <div className="mb-4">
+            <TrustBadge text={config.trustBadge} />
+          </div>
+        )}
         <h1 className="text-3xl font-bold tracking-tight text-ink sm:text-4xl">
           {config.h1}
         </h1>
