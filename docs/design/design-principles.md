@@ -59,10 +59,19 @@ Neutral by default. See `design-tokens.md` for exact values.
   hairline borders (`surface-border`).
 - **Primary action = near-black.** Solid `ink` background, white text. This is
   the Cal.com "Save / Confirm" button. It is our default CTA color.
-- **One accent hue — held in reserve.** In the current traffic-first phase the
-  live UI is **fully monochrome**: links, focus rings, and hovers are all neutral
-  (near-black). The single accent hue is saved entirely for the future primary
-  lead CTA (see the phase note below). Don't spend it on chrome.
+- **Two layers, two color rules.** The **tool** (the calculator itself: inputs,
+  tabs, result card, buttons) stays **monochrome** near-black/white/gray. The
+  **content/guide below the tool** gets a **low-key color layer**: navy headings
+  (`brand-navy`), indigo accents (`accent`) for links/icons/badges/key numbers,
+  soft indigo tints (`accent-soft`) for info boxes/formulas/feature panels, and
+  amber (Tailwind `amber-50/200/700`) for warning callouts. Color here carries
+  meaning (info vs warning) and hierarchy so the content is skimmable at a glance,
+  never loud. Use the components in `components/content.tsx` (Callout, Panel,
+  Formula, Step, Example), styled via `mdx-components.tsx`. Reference:
+  `references/Screenshot 2026-07-08 at 11.52.*`.
+- **Accent for the future CTA.** The primary lead CTA (when capture returns) still
+  gets the accent hue as its one saturated element. It is the same indigo, now
+  also used in the content layer.
 - **Semantic tags, used sparingly.** Small pill badges: neutral for status
   (Required / Hidden / Optional), and at most a couple of tints (e.g. amber for
   "upgrade/attention", green for success/confirmed). Don't invent new colors.

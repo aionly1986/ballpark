@@ -16,6 +16,11 @@ const config: Config = {
           soft: '#eef2ff',
           ink: '#3730a3',
         },
+        // Content color layer (guide sections below the tool). Low-key: navy
+        // headings + indigo accents + soft tints. The tool stays monochrome.
+        brand: {
+          navy: '#1e2a5a',
+        },
         ink: {
           DEFAULT: '#111827', // near-black headings
           soft: '#4b5563', // body copy
