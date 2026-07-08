@@ -39,12 +39,13 @@ calculator at a time, on the operator's instruction.
 - Content must be unique to this page — no boilerplate shared across calculators.
 - Put the FAQs in the config's `faqs` array so they render on-page AND emit FAQ
   schema.
-- **Highlighted number examples (required).** No filler below the tool. Add worked
-  examples to the config's `examples` array; they render in the highlighted
-  `ExampleEstimates` panel and are computed by the tested engine, so the numbers
-  are always correct. This is the content pattern that ranks (see
-  `docs/research/personal-injury-settlement-calculator.md`). Only cite external
-  averages if you have a real source; never invent them.
+- **Worked number examples + tables (required).** No filler below the tool. The
+  content that ranks is skimmable and human: real tables (GFM markdown, styled via
+  `mdx-components.tsx`) and line-by-line worked examples. Compute every example
+  with the tool's engine so the numbers are correct, and verify them. This is the
+  pattern the top rankers use (see the pain-and-suffering synthesis in
+  `docs/research/`). Only cite external averages if you have a real source; never
+  invent them.
 
 ## 4. Wire the nine inputs
 - accident type, state, medical bills, future medical, lost wages, injury

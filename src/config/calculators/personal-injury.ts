@@ -42,32 +42,6 @@ export const personalInjury: CalculatorConfig = {
     ],
     US_STATES,
   ),
-  examples: [
-    {
-      label: 'Minor injury',
-      detail: 'Whiplash from a rear-end crash, full recovery, not at fault.',
-      medicalBills: 6000,
-      futureMedical: 0,
-      lostWages: 2000,
-      severity: 'minor',
-    },
-    {
-      label: 'Moderate injury',
-      detail: 'Broken wrist needing surgery, months of therapy, not at fault.',
-      medicalBills: 20000,
-      futureMedical: 8000,
-      lostWages: 12000,
-      severity: 'moderate',
-    },
-    {
-      label: 'Severe injury',
-      detail: 'Spinal surgery with lasting impairment, not at fault.',
-      medicalBills: 60000,
-      futureMedical: 50000,
-      lostWages: 30000,
-      severity: 'severe',
-    },
-  ],
   faqs: [
     {
       question: 'How accurate is this settlement calculator?',

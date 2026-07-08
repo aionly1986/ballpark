@@ -14,7 +14,6 @@ export const painAndSuffering: CalculatorConfig = {
     'Estimate your pain and suffering settlement in seconds. Free calculator using the multiplier method, your injury severity, medical bills, lost wages, and state fault rules.',
   contentPath: 'pain-and-suffering',
   trustBadge: 'Used to run 3,200+ estimates',
-  resultEmphasis: 'painSuffering',
   form: 'painSuffering',
   labels: {
     accidentType: 'What type of accident?',
@@ -43,32 +42,6 @@ export const painAndSuffering: CalculatorConfig = {
     ],
     US_STATES,
   ),
-  examples: [
-    {
-      label: 'Whiplash',
-      detail: 'Soft-tissue neck injury, full recovery, not at fault.',
-      medicalBills: 8000,
-      futureMedical: 0,
-      lostWages: 2000,
-      severity: 'minor',
-    },
-    {
-      label: 'Broken wrist, surgery',
-      detail: 'Fracture needing surgery and months of therapy, not at fault.',
-      medicalBills: 20000,
-      futureMedical: 8000,
-      lostWages: 12000,
-      severity: 'moderate',
-    },
-    {
-      label: 'Herniated disc, surgery',
-      detail: 'Spinal surgery with lasting impairment, not at fault.',
-      medicalBills: 60000,
-      futureMedical: 50000,
-      lostWages: 30000,
-      severity: 'severe',
-    },
-  ],
   faqs: [
     {
       question: 'How is pain and suffering calculated?',

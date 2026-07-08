@@ -37,20 +37,6 @@ export interface FaqItem {
   answer: string
 }
 
-// A worked example rendered in the highlighted "Example estimates" panel below
-// the tool. Numbers are computed by the shared engine (always correct). Fault is
-// treated as none so the figures are state-independent.
-export interface ExampleScenario {
-  /** Short label, e.g. "Minor injury". */
-  label: string
-  /** One-line description of the scenario. */
-  detail: string
-  medicalBills: number
-  futureMedical: number
-  lostWages: number
-  severity: Severity
-}
-
 /**
  * Everything needed to render one calculator page from data alone. Every future
  * calculator is one new CalculatorConfig plus one content file — no new engine
@@ -90,6 +76,4 @@ export interface CalculatorConfig {
   presets: InputPresets
   /** FAQs rendered on-page and emitted as FAQ schema. */
   faqs: FaqItem[]
-  /** Worked examples for the highlighted panel below the tool. */
-  examples: ExampleScenario[]
 }
