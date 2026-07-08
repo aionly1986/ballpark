@@ -15,6 +15,7 @@ export const painAndSuffering: CalculatorConfig = {
   contentPath: 'pain-and-suffering',
   trustBadge: 'Used to run 3,200+ estimates',
   resultEmphasis: 'painSuffering',
+  form: 'painSuffering',
   labels: {
     accidentType: 'What type of accident?',
     state: 'What state did it happen in?',
@@ -72,7 +73,7 @@ export const painAndSuffering: CalculatorConfig = {
     {
       question: 'How is pain and suffering calculated?',
       answer:
-        'Two methods are common. The multiplier method adds up your economic damages (medical bills, future care, lost wages) and multiplies them by a number, usually 1.5 to 5, based on how severe the injury is. The per diem method assigns a daily dollar amount to your pain and multiplies it by the number of days you are affected. This tool uses the multiplier method.',
+        'Two methods are common, and this calculator does both. The multiplier method adds up your economic damages (medical bills, future care, lost wages) and multiplies them by a number, usually 1.5 to 5, based on how severe the injury is. The per diem method assigns a daily dollar amount to your pain and multiplies it by the number of days you are affected. Switch between them with the tabs.',
     },
     {
       question: 'What multiplier should I use?',

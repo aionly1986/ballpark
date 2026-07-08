@@ -79,6 +79,35 @@ export function DateField({ label, value, onChange }: DateFieldProps) {
   )
 }
 
+interface NumberFieldProps {
+  label: string
+  value: string
+  onChange: (value: string) => void
+  placeholder?: string
+  suffix?: string
+}
+
+export function NumberField({ label, value, onChange, placeholder, suffix }: NumberFieldProps) {
+  return (
+    <Field label={label}>
+      <div className="relative">
+        <input
+          inputMode="numeric"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder ?? '0'}
+          className={`${CONTROL_BASE} py-2.5 pl-4 ${suffix ? 'pr-16' : 'pr-4'}`}
+        />
+        {suffix && (
+          <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm text-ink-faint">
+            {suffix}
+          </span>
+        )}
+      </div>
+    </Field>
+  )
+}
+
 export function toNumber(raw: string): number {
   const n = Number(raw.replace(/[^0-9.]/g, ''))
   return Number.isFinite(n) && n > 0 ? n : 0

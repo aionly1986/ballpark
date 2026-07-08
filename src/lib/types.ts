@@ -74,11 +74,16 @@ export interface CalculatorConfig {
   /** Optional short trust line shown above the result. Must be truthful. */
   trustBadge?: string
   /**
-   * Which number is the hero of the result. 'total' (default) leads with the
-   * full settlement range; 'painSuffering' leads with the pain-and-suffering
-   * range (for the pain-and-suffering calculator).
+   * Which number is the hero of the examples panel. 'total' (default) or
+   * 'painSuffering'.
    */
   resultEmphasis?: 'total' | 'painSuffering'
+  /**
+   * Which interactive calculator to render. Each tool is purpose-built:
+   * 'settlement' (default) is the settlement/PI form; 'painSuffering' is the
+   * dedicated multiplier/per-diem pain-and-suffering form.
+   */
+  form?: 'settlement' | 'painSuffering'
   /** Labels for the nine input fields. */
   labels: InputLabels
   /** Options for the select-style inputs. */

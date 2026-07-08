@@ -1,14 +1,17 @@
-import type { SettlementResult } from './settlement'
-import { formatUSD } from './format'
-
 export interface ReportField {
   label: string
   value: string
 }
 
+// A tool-agnostic report shape so any calculator can produce a branded PDF.
 export interface EstimateReport {
   toolTitle: string
-  result: SettlementResult
+  headlineLabel: string
+  headlineLow: number
+  headlineHigh: number
+  /** Secondary figures shown under the headline (e.g. method, breakdown). */
+  breakdown: ReportField[]
+  /** The inputs the user entered. */
   fields: ReportField[]
   stateNote?: string
 }
@@ -26,8 +29,14 @@ const DISCLAIMER =
   'rely on this report as the basis for any legal or financial decision. Consult a ' +
   'licensed attorney in your state for advice about your situation.'
 
-// Generates and downloads a one-page PDF of the inputs + estimate. jsPDF is
-// imported dynamically so it only loads when the user actually clicks download.
+const usd = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  maximumFractionDigits: 0,
+})
+
+// Generates and downloads a one-page PDF. jsPDF is imported dynamically so it
+// only loads when the user actually clicks download.
 export async function downloadEstimatePdf(report: EstimateReport): Promise<void> {
   const { jsPDF } = await import('jspdf')
   const doc = new jsPDF({ unit: 'pt', format: 'letter' })
@@ -58,16 +67,19 @@ export async function downloadEstimatePdf(report: EstimateReport): Promise<void>
   doc.text(`Estimate generated ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`, M, y)
   y += 30
 
-  // Estimated range
+  // Headline range
   doc.setFontSize(9).setTextColor(...faint)
-  doc.text('ESTIMATED SETTLEMENT RANGE', M, y)
+  doc.text(report.headlineLabel.toUpperCase(), M, y)
   y += 24
   doc.setFont('helvetica', 'bold').setFontSize(22).setTextColor(...ink)
-  doc.text(`${formatUSD(report.result.low)} to ${formatUSD(report.result.high)}`, M, y)
-  y += 24
+  doc.text(`${usd.format(report.headlineLow)} to ${usd.format(report.headlineHigh)}`, M, y)
+  y += 22
   doc.setFont('helvetica', 'normal').setFontSize(11).setTextColor(...soft)
-  doc.text(`Economic damages: ${formatUSD(report.result.economic)}      Pain & suffering: ${formatUSD(report.result.painSuffering)}`, M, y)
-  y += 30
+  for (const b of report.breakdown) {
+    doc.text(`${b.label}: ${b.value}`, M, y)
+    y += 16
+  }
+  y += 14
 
   // Inputs
   doc.setDrawColor(229, 231, 235).line(M, y - 14, pageW - M, y - 14)
@@ -82,11 +94,9 @@ export async function downloadEstimatePdf(report: EstimateReport): Promise<void>
   }
   y += 12
 
-  // State note
   if (report.stateNote) {
     doc.setFontSize(10).setTextColor(...soft)
-    const lines = doc.splitTextToSize(report.stateNote, contentW)
-    doc.text(lines, M, y)
+    doc.text(doc.splitTextToSize(report.stateNote, contentW), M, y)
   }
 
   // Disclaimer pinned to the bottom
@@ -96,5 +106,5 @@ export async function downloadEstimatePdf(report: EstimateReport): Promise<void>
   doc.setFont('helvetica', 'normal').setTextColor(...faint)
   doc.text(doc.splitTextToSize(DISCLAIMER, contentW), M, pageH - 118)
 
-  doc.save('ballpark-settlement-estimate.pdf')
+  doc.save('ballpark-estimate.pdf')
 }

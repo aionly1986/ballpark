@@ -64,7 +64,9 @@ export const FAULT_SHARES: Record<FaultLevel, number> = {
 //  - contributory: any fault bars recovery (reduction = 1).
 //  - modified:     barred once the claimant is ~half or more at fault.
 //  - pure:         reduced by the fault share, no cutoff.
-function reductionForRule(rule: NegligenceRule, faultShare: number): number {
+// Exported so other tools (e.g. the pain-and-suffering calculator) apply the
+// same, tested fault logic.
+export function reductionForRule(rule: NegligenceRule, faultShare: number): number {
   if (rule === 'contributory') return faultShare > 0 ? 1 : 0
   if (rule === 'modified') return faultShare >= 0.5 ? 1 : faultShare
   return faultShare

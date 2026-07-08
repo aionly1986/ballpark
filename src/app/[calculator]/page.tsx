@@ -4,6 +4,7 @@ import { allCalculators, getCalculatorBySlug } from '@/config/calculators'
 import { getContent } from '@/content'
 import { faqSchema, webAppSchema } from '@/lib/schema'
 import CalculatorForm from '@/components/CalculatorForm'
+import PainSufferingForm from '@/components/PainSufferingForm'
 import ExampleEstimates from '@/components/ExampleEstimates'
 import FaqSection from '@/components/FaqSection'
 import TrustBadge from '@/components/TrustBadge'
@@ -61,7 +62,11 @@ export default async function CalculatorPage({ params }: PageProps) {
         </p>
       </div>
 
-      <CalculatorForm config={config} />
+      {config.form === 'painSuffering' ? (
+        <PainSufferingForm config={config} />
+      ) : (
+        <CalculatorForm config={config} />
+      )}
 
       <ExampleEstimates examples={config.examples} emphasis={config.resultEmphasis} />
 

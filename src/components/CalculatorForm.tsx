@@ -104,7 +104,13 @@ export default function CalculatorForm({ config }: CalculatorFormProps) {
     const { downloadEstimatePdf } = await import('@/lib/report')
     await downloadEstimatePdf({
       toolTitle: config.h1,
-      result,
+      headlineLabel: 'Estimated settlement range',
+      headlineLow: result.low,
+      headlineHigh: result.high,
+      breakdown: [
+        { label: 'Economic damages', value: formatUSD(result.economic) },
+        { label: 'Pain and suffering', value: formatUSD(result.painSuffering) },
+      ],
       fields: buildFields(),
       stateNote: negligenceNoteForState(values.state),
     })

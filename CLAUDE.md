@@ -56,10 +56,15 @@ globally) only once pages earn traffic.
 ## Architecture in one paragraph
 Next.js (App Router) + TypeScript, statically generated pages (SSG) so crawlers
 get clean HTML. The calculation runs client-side and instantly. Tailwind with one
-shared design system. Each calculator is **one config file + one content file**
-— no new engine code. (Dormant, for later: a single `/api/leads` route writes to
-Neon and notifies the operator — not wired into any page during the traffic-first
-phase.) Deploy target: Cloudflare Pages (operator-triggered).
+shared design system. Each calculator is **purpose-built**: its own config and content, and, where the
+keyword calls for it, its own form component and calculation logic (e.g. the
+pain-and-suffering tool has a multiplier/per-diem method toggle and a dedicated
+engine). Compose from shared primitives, do not reskin one generic tool: shared
+field inputs (`components/fields.tsx`), fault rules (`lib/negligence.ts`), the PDF
+report (`lib/report.ts`), and formatting. Pick the form via the config `form` key.
+(Dormant, for later: a single `/api/leads` route writes to Neon and notifies the
+operator, not wired into any page during the traffic-first phase.) Deploy target:
+Cloudflare Pages (operator-triggered).
 
 ## Where things live
 - `src/lib/settlement.ts` — the formula (single source of truth) + `tests/`.

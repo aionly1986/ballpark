@@ -18,13 +18,18 @@ calculator at a time, on the operator's instruction.
 - If anything is unclear or missing, STOP and ask 3–5 sharp questions. Reach high
   clarity before writing any code. Do not guess on a YMYL money/legal topic.
 
-## 2. Create the config
+## 2. Create the config and purpose-build the tool
 - Add `src/config/calculators/<slug>.ts` exporting a `CalculatorConfig`.
-- Reuse `US_STATES` and `withSharedPresets` — do not redefine shared options.
+- Reuse `US_STATES` and `withSharedPresets` for shared options.
 - Register it in `src/config/calculators/index.ts` (one line).
-- Do NOT add engine code. If the math genuinely needs to change, that is a
-  separate, tested change to `src/lib/settlement.ts` + `tests/` — never a
-  per-page tweak.
+- **Purpose-build the calculator for its keyword.** Do not reskin one generic
+  tool. If the keyword's best rankers use distinct inputs or methods (e.g. the
+  pain-and-suffering tool's multiplier/per-diem toggle), give it its own form
+  component and, if needed, its own tested engine in `src/lib/`, then wire it via
+  the config `form` key and the switch in `app/[calculator]/page.tsx`.
+- Compose from shared primitives: `components/fields.tsx` inputs, the fault rules
+  in `lib/negligence.ts`, `lib/report.ts` for the PDF, and `lib/format.ts`. Any
+  new calculation logic is deterministic code in `src/lib/` with tests.
 
 ## 3. Add unique content (800–1500 words)
 - Create `src/content/<contentPath>.mdx` and register it in
