@@ -13,34 +13,26 @@ interface ResultCardProps {
 export default function ResultCard({ result, note, onDownload }: ResultCardProps) {
   return (
     <div className="rounded-2xl border border-surface-border bg-surface p-6 shadow-card sm:p-8">
-      <div className="flex items-start justify-between gap-3">
-        <p className="text-sm font-medium uppercase tracking-wide text-ink-faint">
-          Estimated settlement range
-        </p>
-        {onDownload && (
-          <button
-            type="button"
-            onClick={onDownload}
-            className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-surface-border px-3 py-1.5 text-sm font-medium text-ink transition hover:bg-surface-muted"
-          >
-            <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden="true">
-              <path d="M10 3v9m0 0 3.5-3.5M10 12 6.5 8.5M4 15h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            PDF
-          </button>
-        )}
-      </div>
+      <p className="text-sm font-medium uppercase tracking-wide text-ink-faint">
+        Estimated settlement range
+      </p>
 
-      <div className="mt-3">
-        <p className="text-sm font-medium text-ink-faint">From</p>
-        <p className="text-3xl font-bold tracking-tight text-ink sm:text-4xl">
-          {formatUSD(result.low)}
-        </p>
-        <p className="mt-2 text-sm font-medium text-ink-faint">To</p>
-        <p className="text-3xl font-bold tracking-tight text-ink sm:text-4xl">
-          {formatUSD(result.high)}
-        </p>
-      </div>
+      <p className="mt-3 text-2xl font-bold tracking-tight text-ink">
+        {formatUSD(result.low)} - {formatUSD(result.high)}
+      </p>
+
+      {onDownload && (
+        <button
+          type="button"
+          onClick={onDownload}
+          className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-surface-border px-3 py-1.5 text-sm font-medium text-ink transition hover:bg-surface-muted"
+        >
+          <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden="true">
+            <path d="M10 3v9m0 0 3.5-3.5M10 12 6.5 8.5M4 15h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          Download PDF
+        </button>
+      )}
 
       <dl className="mt-6 grid grid-cols-2 gap-4 border-t border-surface-border pt-5 text-sm">
         <div>
