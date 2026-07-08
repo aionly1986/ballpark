@@ -5,8 +5,13 @@ import type { CalculatorConfig } from '@/lib/types'
 import type { Severity, FaultLevel, SettlementResult } from '@/lib/settlement'
 import { calculateSettlement } from '@/lib/settlement'
 import { negligenceRuleForState, negligenceNoteForState } from '@/lib/negligence'
+import { formatUSD } from '@/lib/format'
+import type { ReportField } from '@/lib/report'
 import { SelectField, MoneyField, DateField, toNumber } from './fields'
 import ResultCard from './ResultCard'
+
+type Option = { value: string; label: string }
+const optionLabel = (opts: Option[], v: string) => opts.find((o) => o.value === v)?.label ?? v
 
 type Mode = 'simple' | 'advanced'
 
@@ -73,70 +78,111 @@ export default function CalculatorForm({ config }: CalculatorFormProps) {
     )
   }
 
+  function buildFields(): ReportField[] {
+    const f: ReportField[] = [
+      { label: labels.accidentType, value: optionLabel(presets.accidentType, values.accidentType) },
+      { label: labels.state, value: optionLabel(presets.state, values.state) },
+    ]
+    const money = (label: string, raw: string) => {
+      const n = toNumber(raw)
+      if (n > 0) f.push({ label, value: formatUSD(n) })
+    }
+    money(labels.medicalBills, values.medicalBills)
+    money(labels.futureMedical, values.futureMedical)
+    money(labels.lostWages, values.lostWages)
+    money(labels.futureLostIncome, values.futureLostIncome)
+    money(labels.propertyDamage, values.propertyDamage)
+    money(labels.otherCosts, values.otherCosts)
+    f.push({ label: labels.severity, value: optionLabel(presets.severity, values.severity) })
+    f.push({ label: labels.faultLevel, value: optionLabel(presets.faultLevel, values.faultLevel) })
+    if (values.dateOfAccident) f.push({ label: labels.dateOfAccident, value: values.dateOfAccident })
+    return f
+  }
+
+  async function handleDownload() {
+    if (!result) return
+    const { downloadEstimatePdf } = await import('@/lib/report')
+    await downloadEstimatePdf({
+      toolTitle: config.h1,
+      result,
+      fields: buildFields(),
+      stateNote: negligenceNoteForState(values.state),
+    })
+  }
+
   return (
-    <div className="grid gap-6 lg:grid-cols-5">
-      <section className="lg:col-span-3">
-        <form
-          onSubmit={handleCalculate}
-          className="rounded-2xl border border-surface-border bg-surface p-6 shadow-card sm:p-8"
-        >
-          <ModeTabs mode={mode} onChange={setMode} />
-
-          <div className="mt-6 grid gap-5 sm:grid-cols-2">
-            <SelectField label={labels.accidentType} value={values.accidentType} onChange={(v) => setField('accidentType', v)} options={presets.accidentType} />
-            <SelectField label={labels.state} value={values.state} onChange={(v) => setField('state', v)} options={presets.state} />
-
-            <MoneyField label={labels.medicalBills} value={values.medicalBills} onChange={(v) => setField('medicalBills', v)} />
-            {mode === 'advanced' && (
-              <MoneyField label={labels.futureMedical} value={values.futureMedical} onChange={(v) => setField('futureMedical', v)} />
-            )}
-            <MoneyField label={labels.lostWages} value={values.lostWages} onChange={(v) => setField('lostWages', v)} />
-            {mode === 'advanced' && (
-              <>
-                <MoneyField label={labels.futureLostIncome} value={values.futureLostIncome} onChange={(v) => setField('futureLostIncome', v)} />
-                <MoneyField label={labels.propertyDamage} value={values.propertyDamage} onChange={(v) => setField('propertyDamage', v)} />
-                <MoneyField label={labels.otherCosts} value={values.otherCosts} onChange={(v) => setField('otherCosts', v)} />
-              </>
-            )}
-
-            <SelectField label={labels.severity} value={values.severity} onChange={(v) => setField('severity', v as Severity)} options={presets.severity} />
-            <SelectField label={labels.faultLevel} value={values.faultLevel} onChange={(v) => setField('faultLevel', v as FaultLevel)} options={presets.faultLevel} />
-
-            {mode === 'advanced' && (
-              <DateField label={labels.dateOfAccident} value={values.dateOfAccident} onChange={(v) => setField('dateOfAccident', v)} />
-            )}
-          </div>
-
-          <button
-            type="submit"
-            className="mt-6 w-full rounded-lg bg-ink px-5 py-3 font-semibold text-white transition hover:opacity-90"
-          >
-            Calculate estimate
-          </button>
-        </form>
-      </section>
-
-      <aside className="lg:col-span-2">
-        <div className="lg:sticky lg:top-6">
-          <p className="mb-4 flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 text-sm font-medium text-ink-faint">
+    <div>
+      {/* Trust line, aligned above the result column so both boxes top-align. */}
+      <div className="mb-4 grid gap-6 lg:grid-cols-5">
+        <div className="hidden lg:block lg:col-span-3" />
+        <div className="lg:col-span-2">
+          <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 text-sm font-medium text-ink-faint lg:justify-start">
             <span>Free</span>
             <span aria-hidden="true">&middot;</span>
             <span>Instant estimate</span>
             <span aria-hidden="true">&middot;</span>
             <span>No email required</span>
           </p>
-          {result ? (
-            <ResultCard result={result} note={negligenceNoteForState(values.state)} />
-          ) : (
-            <div className="rounded-2xl border border-dashed border-surface-border bg-surface p-6 text-center sm:p-10">
-              <p className="text-sm leading-6 text-ink-faint">
-                Your estimated range will appear here. Fill in your details and press
-                Calculate.
-              </p>
-            </div>
-          )}
         </div>
-      </aside>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-5">
+        <section className="lg:col-span-3">
+          <form
+            onSubmit={handleCalculate}
+            className="rounded-2xl border border-surface-border bg-surface p-6 shadow-card sm:p-8"
+          >
+            <ModeTabs mode={mode} onChange={setMode} />
+
+            <div className="mt-6 grid gap-5 sm:grid-cols-2">
+              <SelectField label={labels.accidentType} value={values.accidentType} onChange={(v) => setField('accidentType', v)} options={presets.accidentType} />
+              <SelectField label={labels.state} value={values.state} onChange={(v) => setField('state', v)} options={presets.state} />
+
+              <MoneyField label={labels.medicalBills} value={values.medicalBills} onChange={(v) => setField('medicalBills', v)} />
+              {mode === 'advanced' && (
+                <MoneyField label={labels.futureMedical} value={values.futureMedical} onChange={(v) => setField('futureMedical', v)} />
+              )}
+              <MoneyField label={labels.lostWages} value={values.lostWages} onChange={(v) => setField('lostWages', v)} />
+              {mode === 'advanced' && (
+                <>
+                  <MoneyField label={labels.futureLostIncome} value={values.futureLostIncome} onChange={(v) => setField('futureLostIncome', v)} />
+                  <MoneyField label={labels.propertyDamage} value={values.propertyDamage} onChange={(v) => setField('propertyDamage', v)} />
+                  <MoneyField label={labels.otherCosts} value={values.otherCosts} onChange={(v) => setField('otherCosts', v)} />
+                </>
+              )}
+
+              <SelectField label={labels.severity} value={values.severity} onChange={(v) => setField('severity', v as Severity)} options={presets.severity} />
+              <SelectField label={labels.faultLevel} value={values.faultLevel} onChange={(v) => setField('faultLevel', v as FaultLevel)} options={presets.faultLevel} />
+
+              {mode === 'advanced' && (
+                <DateField label={labels.dateOfAccident} value={values.dateOfAccident} onChange={(v) => setField('dateOfAccident', v)} />
+              )}
+            </div>
+
+            <button
+              type="submit"
+              className="mt-6 w-full rounded-lg bg-ink px-5 py-3 font-semibold text-white transition hover:opacity-90"
+            >
+              Calculate estimate
+            </button>
+          </form>
+        </section>
+
+        <aside className="lg:col-span-2">
+          <div className="lg:sticky lg:top-6">
+            {result ? (
+              <ResultCard result={result} note={negligenceNoteForState(values.state)} onDownload={handleDownload} />
+            ) : (
+              <div className="rounded-2xl border border-dashed border-surface-border bg-surface p-6 text-center sm:p-10">
+                <p className="text-sm leading-6 text-ink-faint">
+                  Your estimated range will appear here. Fill in your details and press
+                  Calculate.
+                </p>
+              </div>
+            )}
+          </div>
+        </aside>
+      </div>
     </div>
   )
 }
