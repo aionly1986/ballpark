@@ -12,6 +12,16 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     li: (props) => <li className="leading-7" {...props} />,
     a: (props) => <a className="font-medium text-ink underline underline-offset-2 decoration-ink-faint transition hover:decoration-ink" {...props} />,
     strong: (props) => <strong className="font-semibold text-ink" {...props} />,
+    // Tables: skimmable, hairline borders, scroll on small screens.
+    table: (props) => (
+      <div className="my-6 overflow-x-auto rounded-xl border border-surface-border">
+        <table className="w-full border-collapse text-left text-sm" {...props} />
+      </div>
+    ),
+    thead: (props) => <thead className="bg-surface-muted" {...props} />,
+    th: (props) => <th className="border-b border-surface-border px-4 py-2.5 font-semibold text-ink" {...props} />,
+    td: (props) => <td className="border-b border-surface-border px-4 py-2.5 align-top text-ink-soft" {...props} />,
+    tr: (props) => <tr className="last:[&>td]:border-0" {...props} />,
     ...components,
   }
 }

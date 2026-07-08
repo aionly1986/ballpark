@@ -1,4 +1,5 @@
 import createMDX from '@next/mdx'
+import remarkGfm from 'remark-gfm'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -8,7 +9,10 @@ const nextConfig = {
 }
 
 const withMDX = createMDX({
-  // Add markdown plugins here if needed later (remark/rehype).
+  // remark-gfm enables GitHub-flavored markdown: tables, strikethrough, etc.
+  options: {
+    remarkPlugins: [remarkGfm],
+  },
 })
 
 export default withMDX(nextConfig)

@@ -33,12 +33,16 @@ export interface SettlementInput {
 export interface SettlementResult {
   /** Sum of all economic damages. */
   economic: number
-  /** Pain-and-suffering (non-economic) component. */
+  /** Pain-and-suffering (non-economic) component, before fault reduction. */
   painSuffering: number
-  /** Low end of the estimated range (rounded, whole dollars). */
+  /** Low end of the total settlement range (rounded, whole dollars). */
   low: number
-  /** High end of the estimated range (rounded, whole dollars). */
+  /** High end of the total settlement range (rounded, whole dollars). */
   high: number
+  /** Low end of the pain-and-suffering range, after fault (rounded). */
+  painSufferingLow: number
+  /** High end of the pain-and-suffering range, after fault (rounded). */
+  painSufferingHigh: number
 }
 
 // Non-economic multiplier applied to economic damages, by injury severity.
@@ -86,5 +90,10 @@ export function calculateSettlement(input: SettlementInput): SettlementResult {
   const total = subtotal * (1 - faultPct)
   const low = Math.round(total * 0.75)
   const high = Math.round(total * 1.25)
-  return { economic, painSuffering, low, high }
+  // Pain-and-suffering on its own, after the same fault reduction. This is the
+  // hero number for the pain-and-suffering calculator.
+  const adjustedPainSuffering = painSuffering * (1 - faultPct)
+  const painSufferingLow = Math.round(adjustedPainSuffering * 0.75)
+  const painSufferingHigh = Math.round(adjustedPainSuffering * 1.25)
+  return { economic, painSuffering, low, high, painSufferingLow, painSufferingHigh }
 }

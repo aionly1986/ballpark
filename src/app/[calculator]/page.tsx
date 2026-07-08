@@ -63,7 +63,7 @@ export default async function CalculatorPage({ params }: PageProps) {
 
       <CalculatorForm config={config} />
 
-      <ExampleEstimates examples={config.examples} />
+      <ExampleEstimates examples={config.examples} emphasis={config.resultEmphasis} />
 
       {Content && (
         <article className="mt-14 max-w-content">

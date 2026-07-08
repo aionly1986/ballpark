@@ -73,6 +73,12 @@ export interface CalculatorConfig {
   contentPath: string
   /** Optional short trust line shown above the result. Must be truthful. */
   trustBadge?: string
+  /**
+   * Which number is the hero of the result. 'total' (default) leads with the
+   * full settlement range; 'painSuffering' leads with the pain-and-suffering
+   * range (for the pain-and-suffering calculator).
+   */
+  resultEmphasis?: 'total' | 'painSuffering'
   /** Labels for the nine input fields. */
   labels: InputLabels
   /** Options for the select-style inputs. */

@@ -15,6 +15,9 @@ describe('calculateSettlement', () => {
     expect(r.painSuffering).toBe(15000)
     expect(r.low).toBe(18750)
     expect(r.high).toBe(31250)
+    // Pain-and-suffering range (no fault): 15000 x 0.75/1.25
+    expect(r.painSufferingLow).toBe(11250)
+    expect(r.painSufferingHigh).toBe(18750)
   })
 
   it('moderate severity, partial fault (25% reduction)', () => {
@@ -39,6 +42,9 @@ describe('calculateSettlement', () => {
     expect(r.painSuffering).toBe(200000)
     expect(r.low).toBe(75000)
     expect(r.high).toBe(125000)
+    // Pain-and-suffering after 60% fault: 200000 x 0.4 = 80000, then x 0.75/1.25
+    expect(r.painSufferingLow).toBe(60000)
+    expect(r.painSufferingHigh).toBe(100000)
   })
 
   it('catastrophic severity, no fault', () => {

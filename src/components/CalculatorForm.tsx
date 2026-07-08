@@ -156,7 +156,7 @@ export default function CalculatorForm({ config }: CalculatorFormProps) {
       <aside className="lg:col-span-2">
         <div className="lg:sticky lg:top-6">
           {result ? (
-            <ResultCard result={result} note={negligenceNoteForState(values.state)} onDownload={handleDownload} />
+            <ResultCard result={result} note={negligenceNoteForState(values.state)} onDownload={handleDownload} emphasis={config.resultEmphasis} />
           ) : (
             <div className="rounded-2xl border border-dashed border-surface-border bg-surface p-6 text-center sm:p-10">
               <p className="text-sm leading-6 text-ink-faint">
