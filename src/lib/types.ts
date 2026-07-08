@@ -17,6 +17,10 @@ export interface InputLabels {
   severity: string
   faultLevel: string
   dateOfAccident: string
+  // Advanced-only economic line items.
+  futureLostIncome: string
+  propertyDamage: string
+  otherCosts: string
 }
 
 // The presets/options that drive the form's select fields.
@@ -67,6 +71,8 @@ export interface CalculatorConfig {
   metaDescription: string
   /** Key into the content registry (src/content) for unique page copy. */
   contentPath: string
+  /** Optional short trust line shown above the result. Must be truthful. */
+  trustBadge?: string
   /** Labels for the nine input fields. */
   labels: InputLabels
   /** Options for the select-style inputs. */

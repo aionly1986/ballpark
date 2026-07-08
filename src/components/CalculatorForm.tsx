@@ -5,32 +5,33 @@ import type { CalculatorConfig } from '@/lib/types'
 import type { Severity, FaultLevel } from '@/lib/settlement'
 import { calculateSettlement } from '@/lib/settlement'
 import { negligenceRuleForState, negligenceNoteForState } from '@/lib/negligence'
+import { SelectField, MoneyField, DateField, toNumber } from './fields'
 import ResultCard from './ResultCard'
+import TrustBadge from './TrustBadge'
+
+type Mode = 'simple' | 'advanced'
 
 interface CalculatorFormProps {
   config: CalculatorConfig
 }
 
-// Shared control styling, one source of truth so every field is identical.
-// Neutral (near-black) focus, matching Cal's monochrome UI.
-const CONTROL_BASE =
-  'w-full rounded-lg border border-surface-border bg-surface text-ink outline-none transition focus:border-ink focus:ring-2 focus:ring-ink/10'
-const CONTROL = `${CONTROL_BASE} px-4 py-2.5`
-
-// Client component. Holds the inputs, computes the estimate instantly on every
-// change (no server round-trip), and shows the live result beside them. Kept
-// compact (2-col) so the whole tool fits above the fold.
+// Client component. Two modes: Simple (fast, above the fold) and Advanced (more
+// economic line items). Both share one state; the estimate always uses whatever
+// is filled and recomputes instantly.
 export default function CalculatorForm({ config }: CalculatorFormProps) {
   const { labels, presets } = config
+  const [mode, setMode] = useState<Mode>('simple')
 
-  // Five fields feed the math; the rest add context for the estimate.
+  const [accidentType, setAccidentType] = useState(presets.accidentType[0].value)
+  const [state, setState] = useState(presets.state[0].value)
   const [medicalBills, setMedicalBills] = useState('')
   const [futureMedical, setFutureMedical] = useState('')
   const [lostWages, setLostWages] = useState('')
+  const [futureLostIncome, setFutureLostIncome] = useState('')
+  const [propertyDamage, setPropertyDamage] = useState('')
+  const [otherCosts, setOtherCosts] = useState('')
   const [severity, setSeverity] = useState<Severity>(presets.severity[0].value)
   const [faultLevel, setFaultLevel] = useState<FaultLevel>(presets.faultLevel[0].value)
-  const [accidentType, setAccidentType] = useState(presets.accidentType[0].value)
-  const [state, setState] = useState(presets.state[0].value)
   const [dateOfAccident, setDateOfAccident] = useState('')
 
   const result = useMemo(
@@ -39,11 +40,14 @@ export default function CalculatorForm({ config }: CalculatorFormProps) {
         medicalBills: toNumber(medicalBills),
         futureMedical: toNumber(futureMedical),
         lostWages: toNumber(lostWages),
+        futureLostIncome: toNumber(futureLostIncome),
+        propertyDamage: toNumber(propertyDamage),
+        otherCosts: toNumber(otherCosts),
         severity,
         faultLevel,
         negligenceRule: negligenceRuleForState(state),
       }),
-    [medicalBills, futureMedical, lostWages, severity, faultLevel, state],
+    [medicalBills, futureMedical, lostWages, futureLostIncome, propertyDamage, otherCosts, severity, faultLevel, state],
   )
 
   const stateNote = negligenceNoteForState(state)
@@ -52,48 +56,38 @@ export default function CalculatorForm({ config }: CalculatorFormProps) {
     <div className="grid gap-6 lg:grid-cols-5">
       <section className="lg:col-span-3">
         <div className="rounded-2xl border border-surface-border bg-surface p-6 shadow-card sm:p-8">
-          <div className="grid gap-5 sm:grid-cols-2">
-            <Select
-              label={labels.accidentType}
-              value={accidentType}
-              onChange={setAccidentType}
-              options={presets.accidentType}
-            />
-            <Select
-              label={labels.state}
-              value={state}
-              onChange={setState}
-              options={presets.state}
-            />
-            <Money label={labels.medicalBills} value={medicalBills} onChange={setMedicalBills} />
-            <Money label={labels.futureMedical} value={futureMedical} onChange={setFutureMedical} />
-            <Money label={labels.lostWages} value={lostWages} onChange={setLostWages} />
-            <Field label={labels.dateOfAccident}>
-              <input
-                type="date"
-                value={dateOfAccident}
-                onChange={(e) => setDateOfAccident(e.target.value)}
-                className={CONTROL}
-              />
-            </Field>
-            <Select
-              label={labels.severity}
-              value={severity}
-              onChange={(v) => setSeverity(v as Severity)}
-              options={presets.severity}
-            />
-            <Select
-              label={labels.faultLevel}
-              value={faultLevel}
-              onChange={(v) => setFaultLevel(v as FaultLevel)}
-              options={presets.faultLevel}
-            />
+          <ModeTabs mode={mode} onChange={setMode} />
+
+          <div className="mt-6 grid gap-5 sm:grid-cols-2">
+            <SelectField label={labels.accidentType} value={accidentType} onChange={setAccidentType} options={presets.accidentType} />
+            <SelectField label={labels.state} value={state} onChange={setState} options={presets.state} />
+
+            <MoneyField label={labels.medicalBills} value={medicalBills} onChange={setMedicalBills} />
+            {mode === 'advanced' && (
+              <MoneyField label={labels.futureMedical} value={futureMedical} onChange={setFutureMedical} />
+            )}
+            <MoneyField label={labels.lostWages} value={lostWages} onChange={setLostWages} />
+            {mode === 'advanced' && (
+              <>
+                <MoneyField label={labels.futureLostIncome} value={futureLostIncome} onChange={setFutureLostIncome} />
+                <MoneyField label={labels.propertyDamage} value={propertyDamage} onChange={setPropertyDamage} />
+                <MoneyField label={labels.otherCosts} value={otherCosts} onChange={setOtherCosts} />
+              </>
+            )}
+
+            <SelectField label={labels.severity} value={severity} onChange={(v) => setSeverity(v as Severity)} options={presets.severity} />
+            <SelectField label={labels.faultLevel} value={faultLevel} onChange={(v) => setFaultLevel(v as FaultLevel)} options={presets.faultLevel} />
+
+            {mode === 'advanced' && (
+              <DateField label={labels.dateOfAccident} value={dateOfAccident} onChange={setDateOfAccident} />
+            )}
           </div>
         </div>
       </section>
 
       <aside className="lg:col-span-2">
         <div className="lg:sticky lg:top-6">
+          {config.trustBadge && <TrustBadge text={config.trustBadge} />}
           <ResultCard result={result} note={stateNote} />
         </div>
       </aside>
@@ -101,62 +95,22 @@ export default function CalculatorForm({ config }: CalculatorFormProps) {
   )
 }
 
-function toNumber(raw: string): number {
-  const n = Number(raw.replace(/[^0-9.]/g, ''))
-  return Number.isFinite(n) && n > 0 ? n : 0
-}
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function ModeTabs({ mode, onChange }: { mode: Mode; onChange: (m: Mode) => void }) {
   return (
-    <label className="block">
-      <span className="mb-1.5 block text-sm font-medium text-ink">{label}</span>
-      {children}
-    </label>
-  )
-}
-
-interface SelectProps {
-  label: string
-  value: string
-  onChange: (value: string) => void
-  options: { value: string; label: string }[]
-}
-
-function Select({ label, value, onChange, options }: SelectProps) {
-  return (
-    <Field label={label}>
-      <select value={value} onChange={(e) => onChange(e.target.value)} className={CONTROL}>
-        {options.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.label}
-          </option>
-        ))}
-      </select>
-    </Field>
-  )
-}
-
-interface MoneyProps {
-  label: string
-  value: string
-  onChange: (value: string) => void
-}
-
-function Money({ label, value, onChange }: MoneyProps) {
-  return (
-    <Field label={label}>
-      <div className="relative">
-        <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-ink-faint">
-          $
-        </span>
-        <input
-          inputMode="numeric"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder="0"
-          className={`${CONTROL_BASE} py-2.5 pl-8 pr-4`}
-        />
-      </div>
-    </Field>
+    <div className="inline-flex rounded-lg border border-surface-border bg-surface-muted p-1">
+      {(['simple', 'advanced'] as Mode[]).map((m) => (
+        <button
+          key={m}
+          type="button"
+          onClick={() => onChange(m)}
+          className={
+            'rounded-md px-4 py-1.5 text-sm font-medium capitalize transition ' +
+            (mode === m ? 'bg-surface text-ink shadow-card' : 'text-ink-faint hover:text-ink')
+          }
+        >
+          {m}
+        </button>
+      ))}
+    </div>
   )
 }

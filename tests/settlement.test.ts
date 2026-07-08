@@ -84,6 +84,20 @@ describe('calculateSettlement', () => {
     expect(r.high).toBe(0)
   })
 
+  it('sums the Advanced economic line items into the estimate', () => {
+    // economic = 10000 + 5000 + 8000 + 4000 + 3000 + 1000 = 31000
+    // minor x1.5 -> PS 46500 -> subtotal 77500 -> total 77500
+    const r = calculateSettlement({
+      medicalBills: 10000, futureMedical: 5000, lostWages: 8000,
+      futureLostIncome: 4000, propertyDamage: 3000, otherCosts: 1000,
+      severity: 'minor', faultLevel: 'none', negligenceRule: 'modified',
+    })
+    expect(r.economic).toBe(31000)
+    expect(r.painSuffering).toBe(46500)
+    expect(r.low).toBe(58125)
+    expect(r.high).toBe(96875)
+  })
+
   it('CONTRIBUTORY negligence does not bar a no-fault claim', () => {
     // No fault -> no reduction, same as any other rule.
     const r = calculateSettlement({

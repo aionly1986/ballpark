@@ -13,6 +13,8 @@ export const personalInjury: CalculatorConfig = {
   metaDescription:
     'Estimate your personal injury settlement in seconds. Free calculator using medical bills, lost wages, injury severity, and fault to show a low-to-high range.',
   contentPath: 'personal-injury',
+  // TODO(operator): confirm wording. Must stay truthful (no fabricated user counts).
+  trustBadge: 'Based on the standard settlement formula',
   labels: {
     accidentType: 'What type of accident?',
     state: 'What state did it happen in?',
@@ -22,6 +24,9 @@ export const personalInjury: CalculatorConfig = {
     severity: 'How severe is the injury?',
     faultLevel: 'Were you at fault?',
     dateOfAccident: 'Date of the accident',
+    futureLostIncome: 'Estimated future lost income ($)',
+    propertyDamage: 'Property damage, e.g. vehicle ($)',
+    otherCosts: 'Other out-of-pocket costs ($)',
   },
   presets: withSharedPresets(
     [

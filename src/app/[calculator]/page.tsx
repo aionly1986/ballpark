@@ -46,19 +46,19 @@ export default async function CalculatorPage({ params }: PageProps) {
       />
 
       <div className="mb-8 max-w-content">
+        <p className="mb-3 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-sm font-medium text-ink-faint">
+          <span>Free</span>
+          <span aria-hidden="true">&middot;</span>
+          <span>Instant estimate</span>
+          <span aria-hidden="true">&middot;</span>
+          <span>No email required</span>
+        </p>
         <h1 className="text-3xl font-bold tracking-tight text-ink sm:text-4xl">
           {config.h1}
         </h1>
         <p className="mt-3 text-lg leading-8 text-ink-soft">
           Estimate a {config.injuryType} settlement in seconds. Enter your numbers below
           for an instant low-to-high range.
-        </p>
-        <p className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-sm font-medium text-ink-faint">
-          <span>Free</span>
-          <span aria-hidden="true">&middot;</span>
-          <span>Instant estimate</span>
-          <span aria-hidden="true">&middot;</span>
-          <span>No email required</span>
         </p>
       </div>
 

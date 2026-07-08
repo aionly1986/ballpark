@@ -14,12 +14,20 @@ export interface SettlementInput {
   medicalBills: number
   /** Estimated future medical costs, in dollars. */
   futureMedical: number
-  /** Lost wages / income, in dollars. */
+  /** Lost wages / income to date, in dollars. */
   lostWages: number
   severity: Severity
   faultLevel: FaultLevel
   /** The claimant's state comparative-fault rule (see negligence.ts). */
   negligenceRule: NegligenceRule
+  // Optional economic line items (used by the Advanced calculator). All default
+  // to 0 and simply add to economic damages.
+  /** Estimated future lost income / diminished earning capacity, in dollars. */
+  futureLostIncome?: number
+  /** Property damage (e.g. vehicle repair), in dollars. */
+  propertyDamage?: number
+  /** Other out-of-pocket costs, in dollars. */
+  otherCosts?: number
 }
 
 export interface SettlementResult {
@@ -63,7 +71,13 @@ function reductionForRule(rule: NegligenceRule, faultShare: number): number {
  * low-to-high range, never a single number. A barred claim returns a $0 range.
  */
 export function calculateSettlement(input: SettlementInput): SettlementResult {
-  const economic = input.medicalBills + input.futureMedical + input.lostWages
+  const economic =
+    input.medicalBills +
+    input.futureMedical +
+    input.lostWages +
+    (input.futureLostIncome ?? 0) +
+    (input.propertyDamage ?? 0) +
+    (input.otherCosts ?? 0)
   const multiplier = SEVERITY_MULTIPLIERS[input.severity]
   const painSuffering = economic * multiplier
   const subtotal = economic + painSuffering
