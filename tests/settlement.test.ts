@@ -104,6 +104,28 @@ describe('calculateSettlement', () => {
     expect(r.high).toBe(96875)
   })
 
+  it('caps the range at the insurance policy limit', () => {
+    // economic 40000 -> PS 120000 -> subtotal 160000 -> total 160000
+    // range 120000..200000; policy limit 150000 caps the high end.
+    const r = calculateSettlement({
+      medicalBills: 20000, futureMedical: 5000, lostWages: 15000,
+      severity: 'moderate', faultLevel: 'none', negligenceRule: 'modified',
+      policyLimit: 150000,
+    })
+    expect(r.low).toBe(120000)
+    expect(r.high).toBe(150000)
+    expect(r.cappedByPolicy).toBe(true)
+  })
+
+  it('does not cap when no policy limit is given', () => {
+    const r = calculateSettlement({
+      medicalBills: 20000, futureMedical: 5000, lostWages: 15000,
+      severity: 'moderate', faultLevel: 'none', negligenceRule: 'modified',
+    })
+    expect(r.cappedByPolicy).toBe(false)
+    expect(r.high).toBe(200000)
+  })
+
   it('CONTRIBUTORY negligence does not bar a no-fault claim', () => {
     // No fault -> no reduction, same as any other rule.
     const r = calculateSettlement({

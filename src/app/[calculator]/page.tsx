@@ -5,6 +5,7 @@ import { getContent } from '@/content'
 import { faqSchema, webAppSchema } from '@/lib/schema'
 import CalculatorForm from '@/components/CalculatorForm'
 import PainSufferingForm from '@/components/PainSufferingForm'
+import CarAccidentForm from '@/components/CarAccidentForm'
 import FaqSection from '@/components/FaqSection'
 import TrustBadge from '@/components/TrustBadge'
 
@@ -63,6 +64,8 @@ export default async function CalculatorPage({ params }: PageProps) {
 
       {config.form === 'painSuffering' ? (
         <PainSufferingForm config={config} />
+      ) : config.form === 'carAccident' ? (
+        <CarAccidentForm config={config} />
       ) : (
         <CalculatorForm config={config} />
       )}

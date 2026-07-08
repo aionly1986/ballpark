@@ -69,7 +69,7 @@ export interface CalculatorConfig {
    * 'settlement' (default) is the settlement/PI form; 'painSuffering' is the
    * dedicated multiplier/per-diem pain-and-suffering form.
    */
-  form?: 'settlement' | 'painSuffering'
+  form?: 'settlement' | 'painSuffering' | 'carAccident'
   /** Labels for the nine input fields. */
   labels: InputLabels
   /** Options for the select-style inputs. */

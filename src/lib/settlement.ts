@@ -28,6 +28,12 @@ export interface SettlementInput {
   propertyDamage?: number
   /** Other out-of-pocket costs, in dollars. */
   otherCosts?: number
+  /**
+   * The at-fault party's insurance policy limit, in dollars. If set (> 0), the
+   * settlement range is capped at it (a settlement rarely exceeds available
+   * coverage). Used by the car-accident calculator.
+   */
+  policyLimit?: number
 }
 
 export interface SettlementResult {
@@ -43,6 +49,8 @@ export interface SettlementResult {
   painSufferingLow: number
   /** High end of the pain-and-suffering range, after fault (rounded). */
   painSufferingHigh: number
+  /** True if the range was capped by the insurance policy limit. */
+  cappedByPolicy: boolean
 }
 
 // Non-economic multiplier applied to economic damages, by injury severity.
@@ -90,12 +98,23 @@ export function calculateSettlement(input: SettlementInput): SettlementResult {
   const faultShare = FAULT_SHARES[input.faultLevel]
   const faultPct = reductionForRule(input.negligenceRule, faultShare)
   const total = subtotal * (1 - faultPct)
-  const low = Math.round(total * 0.75)
-  const high = Math.round(total * 1.25)
+  let low = Math.round(total * 0.75)
+  let high = Math.round(total * 1.25)
+  // A settlement rarely exceeds the at-fault party's coverage. Cap at the policy
+  // limit if one was provided.
+  let cappedByPolicy = false
+  const limit = input.policyLimit ?? 0
+  if (limit > 0) {
+    if (high > limit) {
+      high = limit
+      cappedByPolicy = true
+    }
+    if (low > limit) low = limit
+  }
   // Pain-and-suffering on its own, after the same fault reduction. This is the
   // hero number for the pain-and-suffering calculator.
   const adjustedPainSuffering = painSuffering * (1 - faultPct)
   const painSufferingLow = Math.round(adjustedPainSuffering * 0.75)
   const painSufferingHigh = Math.round(adjustedPainSuffering * 1.25)
-  return { economic, painSuffering, low, high, painSufferingLow, painSufferingHigh }
+  return { economic, painSuffering, low, high, painSufferingLow, painSufferingHigh, cappedByPolicy }
 }
