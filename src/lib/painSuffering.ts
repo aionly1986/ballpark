@@ -22,6 +22,8 @@ export interface PainSufferingInput {
   // Both:
   faultLevel: FaultLevel
   negligenceRule: NegligenceRule
+  /** No-fault state gate: zeroes pain and suffering for a minor injury. */
+  noFaultGate?: boolean
 }
 
 export interface PainSufferingResult {
@@ -48,7 +50,8 @@ export function calculatePainSuffering(input: PainSufferingInput): PainSuffering
     base = input.dailyRate * input.recoveryDays
   } else {
     multiplier = multiplierFor(input.severity, input.permanent)
-    base = input.economicDamages * multiplier
+    // No-fault states bar pain and suffering for a below-threshold minor injury.
+    base = input.noFaultGate ? 0 : input.economicDamages * multiplier
   }
   const faultPct = reductionForRule(input.negligenceRule, FAULT_SHARES[input.faultLevel])
   const adjusted = base * (1 - faultPct)

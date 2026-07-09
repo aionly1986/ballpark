@@ -126,6 +126,19 @@ describe('calculateSettlement', () => {
     expect(r.high).toBe(200000)
   })
 
+  it('no-fault gate zeroes pain and suffering (settlement = economic only)', () => {
+    // minor injury in a no-fault state: economic 10000, PS = 0, total = 10000
+    const r = calculateSettlement({
+      medicalBills: 8000, futureMedical: 0, lostWages: 2000,
+      severity: 'minor', faultLevel: 'none', negligenceRule: 'pure',
+      noFaultGate: true,
+    })
+    expect(r.painSuffering).toBe(0)
+    expect(r.low).toBe(7500)
+    expect(r.high).toBe(12500)
+    expect(r.painSufferingLow).toBe(0)
+  })
+
   it('CONTRIBUTORY negligence does not bar a no-fault claim', () => {
     // No fault -> no reduction, same as any other rule.
     const r = calculateSettlement({

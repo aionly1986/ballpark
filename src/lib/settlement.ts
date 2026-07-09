@@ -34,6 +34,11 @@ export interface SettlementInput {
    * coverage). Used by the car-accident calculator.
    */
   policyLimit?: number
+  /**
+   * True when a no-fault (PIP) state bars a below-threshold minor injury from
+   * claiming pain and suffering. When set, pain and suffering is zeroed.
+   */
+  noFaultGate?: boolean
 }
 
 export interface SettlementResult {
@@ -93,7 +98,8 @@ export function calculateSettlement(input: SettlementInput): SettlementResult {
     (input.propertyDamage ?? 0) +
     (input.otherCosts ?? 0)
   const multiplier = SEVERITY_MULTIPLIERS[input.severity]
-  const painSuffering = economic * multiplier
+  // No-fault states bar pain and suffering for a below-threshold minor injury.
+  const painSuffering = input.noFaultGate ? 0 : economic * multiplier
   const subtotal = economic + painSuffering
   const faultShare = FAULT_SHARES[input.faultLevel]
   const faultPct = reductionForRule(input.negligenceRule, faultShare)

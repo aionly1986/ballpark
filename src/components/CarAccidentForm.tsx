@@ -4,7 +4,8 @@ import { useState } from 'react'
 import type { CalculatorConfig } from '@/lib/types'
 import type { Severity, FaultLevel, SettlementResult } from '@/lib/settlement'
 import { calculateSettlement } from '@/lib/settlement'
-import { negligenceRuleForState, negligenceNoteForState } from '@/lib/negligence'
+import { negligenceRuleForState } from '@/lib/negligence'
+import { stateNote as buildStateNote, gatesPainSuffering } from '@/lib/states'
 import { formatUSD } from '@/lib/format'
 import type { ReportField } from '@/lib/report'
 import { SelectField, MoneyField, toNumber } from './fields'
@@ -64,6 +65,7 @@ export default function CarAccidentForm({ config }: { config: CalculatorConfig }
         severity: values.severity,
         faultLevel: values.faultLevel,
         negligenceRule: negligenceRuleForState(values.state),
+        noFaultGate: gatesPainSuffering(values.state, values.severity),
       }),
     )
   }
@@ -105,15 +107,15 @@ export default function CarAccidentForm({ config }: { config: CalculatorConfig }
       headlineHigh: result.high,
       breakdown,
       fields: buildFields(),
-      stateNote: negligenceNoteForState(values.state),
+      stateNote: buildStateNote(values.state, values.severity),
     })
   }
 
-  const stateNote = negligenceNoteForState(values.state)
+  const sNote = buildStateNote(values.state, values.severity)
   const capNote = result?.cappedByPolicy
     ? 'Capped at the policy limit you entered, since a settlement rarely exceeds the at-fault driver’s available coverage.'
     : ''
-  const note = [capNote, stateNote].filter(Boolean).join(' ')
+  const note = [capNote, sNote].filter(Boolean).join(' ')
 
   return (
     <div className="grid gap-6 lg:grid-cols-5">

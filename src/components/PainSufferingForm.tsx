@@ -5,7 +5,8 @@ import type { CalculatorConfig } from '@/lib/types'
 import type { Severity, FaultLevel } from '@/lib/settlement'
 import type { PsMethod, PainSufferingResult } from '@/lib/painSuffering'
 import { calculatePainSuffering } from '@/lib/painSuffering'
-import { negligenceRuleForState, negligenceNoteForState } from '@/lib/negligence'
+import { negligenceRuleForState } from '@/lib/negligence'
+import { stateNote as buildStateNote, gatesPainSuffering } from '@/lib/states'
 import { formatUSD } from '@/lib/format'
 import type { ReportField } from '@/lib/report'
 import { SelectField, MoneyField, NumberField, toNumber } from './fields'
@@ -69,6 +70,7 @@ export default function PainSufferingForm({ config }: { config: CalculatorConfig
         recoveryDays: toNumber(values.recoveryDays),
         faultLevel: values.faultLevel,
         negligenceRule: negligenceRuleForState(values.state),
+        noFaultGate: values.method === 'multiplier' && gatesPainSuffering(values.state, values.severity),
       }),
     )
   }
@@ -111,7 +113,7 @@ export default function PainSufferingForm({ config }: { config: CalculatorConfig
       headlineHigh: result.high,
       breakdown,
       fields: buildFields(),
-      stateNote: negligenceNoteForState(values.state),
+      stateNote: buildStateNote(values.state, values.severity),
     })
   }
 
@@ -168,7 +170,7 @@ export default function PainSufferingForm({ config }: { config: CalculatorConfig
               economicDamages={economicDamages}
               dailyRate={toNumber(values.dailyRate)}
               recoveryDays={toNumber(values.recoveryDays)}
-              note={negligenceNoteForState(values.state)}
+              note={buildStateNote(values.state, values.severity)}
               onDownload={handleDownload}
             />
           ) : (

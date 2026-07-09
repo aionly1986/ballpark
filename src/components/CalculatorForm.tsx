@@ -4,7 +4,8 @@ import { useState } from 'react'
 import type { CalculatorConfig } from '@/lib/types'
 import type { Severity, FaultLevel, SettlementResult } from '@/lib/settlement'
 import { calculateSettlement } from '@/lib/settlement'
-import { negligenceRuleForState, negligenceNoteForState } from '@/lib/negligence'
+import { negligenceRuleForState } from '@/lib/negligence'
+import { stateNote, gatesPainSuffering } from '@/lib/states'
 import { formatUSD } from '@/lib/format'
 import type { ReportField } from '@/lib/report'
 import { SelectField, MoneyField, DateField, toNumber } from './fields'
@@ -74,6 +75,7 @@ export default function CalculatorForm({ config }: CalculatorFormProps) {
         severity: values.severity,
         faultLevel: values.faultLevel,
         negligenceRule: negligenceRuleForState(values.state),
+        noFaultGate: gatesPainSuffering(values.state, values.severity),
       }),
     )
   }
@@ -112,7 +114,7 @@ export default function CalculatorForm({ config }: CalculatorFormProps) {
         { label: 'Pain and suffering', value: formatUSD(result.painSuffering) },
       ],
       fields: buildFields(),
-      stateNote: negligenceNoteForState(values.state),
+      stateNote: stateNote(values.state, values.severity),
     })
   }
 
@@ -162,7 +164,7 @@ export default function CalculatorForm({ config }: CalculatorFormProps) {
       <aside className="lg:col-span-2">
         <div className="lg:sticky lg:top-6">
           {result ? (
-            <ResultCard result={result} note={negligenceNoteForState(values.state)} onDownload={handleDownload} emphasis={config.resultEmphasis} />
+            <ResultCard result={result} note={stateNote(values.state, values.severity)} onDownload={handleDownload} emphasis={config.resultEmphasis} />
           ) : (
             <div className="rounded-2xl border border-dashed border-surface-border bg-surface p-6 text-center sm:p-10">
               <p className="text-sm leading-6 text-ink-faint">
