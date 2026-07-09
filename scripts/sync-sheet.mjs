@@ -24,14 +24,12 @@ const KEY_PATH = join(ROOT, 'google-service-account.json')
 const COL = {
   status: 10,
   deployed: 11,
-  sitemap: 12,
-  indexed: 13,
+  indexed: 12,
 }
 
 const DROPDOWNS = [
   { col: COL.status, values: ['Live', 'Building', 'Planned', 'Paused'] },
   { col: COL.deployed, values: ['Yes', 'No'] },
-  { col: COL.sitemap, values: ['Yes', 'No'] },
   { col: COL.indexed, values: ['Yes', 'Pending', 'No'] },
 ]
 
@@ -48,8 +46,6 @@ const COLOR_RULES = [
   { col: COL.status, text: 'Paused', color: RED },
   { col: COL.deployed, text: 'Yes', color: GREEN },
   { col: COL.deployed, text: 'No', color: RED },
-  { col: COL.sitemap, text: 'Yes', color: GREEN },
-  { col: COL.sitemap, text: 'No', color: RED },
   { col: COL.indexed, text: 'Yes', color: GREEN },
   { col: COL.indexed, text: 'Pending', color: AMBER },
   { col: COL.indexed, text: 'No', color: RED },
@@ -162,6 +158,15 @@ async function main() {
     updateSheetProperties: {
       properties: { sheetId, gridProperties: { frozenRowCount: 1 } },
       fields: 'gridProperties.frozenRowCount',
+    },
+  })
+
+  // Clear any prior data validation across the sheet first, so a removed or
+  // shifted column (e.g. the old "Sitemap submitted" column) does not keep a
+  // stale dropdown. A setDataValidation with no rule clears the range.
+  requests.push({
+    setDataValidation: {
+      range: { sheetId, startRowIndex: 1, endRowIndex: 1000, startColumnIndex: 0, endColumnIndex: 26 },
     },
   })
 
