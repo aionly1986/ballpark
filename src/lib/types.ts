@@ -67,9 +67,10 @@ export interface CalculatorConfig {
   /**
    * Which interactive calculator to render. Each tool is purpose-built:
    * 'settlement' (default) is the settlement/PI form; 'painSuffering' is the
-   * dedicated multiplier/per-diem pain-and-suffering form.
+   * dedicated multiplier/per-diem pain-and-suffering form; 'dogBite',
+   * 'truckAccident', and 'workersComp' each have their own form and engine.
    */
-  form?: 'settlement' | 'painSuffering' | 'carAccident'
+  form?: 'settlement' | 'painSuffering' | 'carAccident' | 'dogBite' | 'truckAccident' | 'workersComp'
   /** Labels for the nine input fields. */
   labels: InputLabels
   /** Options for the select-style inputs. */

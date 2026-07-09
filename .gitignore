@@ -24,6 +24,11 @@ yarn-error.log*
 .env
 .env*.local
 
+# service account keys (never commit)
+google-service-account.json
+*-service-account*.json
+*.iam.gserviceaccount.com.json
+
 # typescript
 next-env.d.ts
 *.tsbuildinfo
