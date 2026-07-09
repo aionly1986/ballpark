@@ -8,7 +8,7 @@ import { negligenceRuleForState } from '@/lib/negligence'
 import { stateNote, gatesPainSuffering } from '@/lib/states'
 import { formatUSD } from '@/lib/format'
 import type { ReportField } from '@/lib/report'
-import { SelectField, MoneyField, DateField, toNumber } from './fields'
+import { SelectField, MoneyField, DateField, toNumber, Spinner, StaleNote } from './fields'
 import ResultCard from './ResultCard'
 
 type Option = { value: string; label: string }
@@ -42,6 +42,8 @@ export default function CalculatorForm({ config }: CalculatorFormProps) {
   const { labels, presets } = config
   const [mode, setMode] = useState<Mode>('simple')
   const [result, setResult] = useState<SettlementResult | null>(null)
+  const [calculating, setCalculating] = useState(false)
+  const [stale, setStale] = useState(false)
 
   const [values, setValues] = useState<Values>({
     accidentType: presets.accidentType[0].value,
@@ -59,25 +61,29 @@ export default function CalculatorForm({ config }: CalculatorFormProps) {
 
   function setField<K extends keyof Values>(key: K, value: Values[K]) {
     setValues((prev) => ({ ...prev, [key]: value }))
-    setResult(null)
+    if (result) setStale(true)
   }
 
   function handleCalculate(e: React.FormEvent) {
     e.preventDefault()
-    setResult(
-      calculateSettlement({
-        medicalBills: toNumber(values.medicalBills),
-        futureMedical: toNumber(values.futureMedical),
-        lostWages: toNumber(values.lostWages),
-        futureLostIncome: toNumber(values.futureLostIncome),
-        propertyDamage: toNumber(values.propertyDamage),
-        otherCosts: toNumber(values.otherCosts),
-        severity: values.severity,
-        faultLevel: values.faultLevel,
-        negligenceRule: negligenceRuleForState(values.state),
-        noFaultGate: gatesPainSuffering(values.state, values.severity),
-      }),
-    )
+    const input = {
+      medicalBills: toNumber(values.medicalBills),
+      futureMedical: toNumber(values.futureMedical),
+      lostWages: toNumber(values.lostWages),
+      futureLostIncome: toNumber(values.futureLostIncome),
+      propertyDamage: toNumber(values.propertyDamage),
+      otherCosts: toNumber(values.otherCosts),
+      severity: values.severity,
+      faultLevel: values.faultLevel,
+      negligenceRule: negligenceRuleForState(values.state),
+      noFaultGate: gatesPainSuffering(values.state, values.severity),
+    }
+    setCalculating(true)
+    setTimeout(() => {
+      setResult(calculateSettlement(input))
+      setCalculating(false)
+      setStale(false)
+    }, 900)
   }
 
   function buildFields(): ReportField[] {
@@ -154,15 +160,24 @@ export default function CalculatorForm({ config }: CalculatorFormProps) {
 
           <button
             type="submit"
-            className="mt-6 w-full rounded-lg bg-ink px-5 py-3 font-semibold text-white transition hover:opacity-90"
+            disabled={calculating}
+            className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-ink px-5 py-3 font-semibold text-white transition hover:opacity-90 disabled:opacity-80"
           >
-            Calculate estimate
+            {calculating ? (
+              <>
+                <Spinner />
+                Calculating…
+              </>
+            ) : (
+              'Calculate estimate'
+            )}
           </button>
         </form>
       </section>
 
       <aside className="lg:col-span-2">
         <div className="lg:sticky lg:top-6">
+          {stale && result && !calculating && <StaleNote />}
           {result ? (
             <ResultCard result={result} note={stateNote(values.state, values.severity)} onDownload={handleDownload} emphasis={config.resultEmphasis} />
           ) : (

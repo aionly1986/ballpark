@@ -112,3 +112,26 @@ export function toNumber(raw: string): number {
   const n = Number(raw.replace(/[^0-9.]/g, ''))
   return Number.isFinite(n) && n > 0 ? n : 0
 }
+
+// A small spinning loader for the Calculate button.
+export function Spinner() {
+  return (
+    <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2.5" className="opacity-25" />
+      <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+// Shown above the result when inputs changed after a calculation, so the visible
+// number is not silently treated as current.
+export function StaleNote() {
+  return (
+    <div className="mb-3 flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-700">
+      <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4 shrink-0" aria-hidden="true">
+        <path d="M15.5 6.5A6 6 0 1 0 16 10M15.5 3v3.5H12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+      Inputs changed. Press Calculate to update.
+    </div>
+  )
+}

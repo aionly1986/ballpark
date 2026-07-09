@@ -9,7 +9,7 @@ import { negligenceRuleForState } from '@/lib/negligence'
 import { stateNote as buildStateNote, gatesPainSuffering } from '@/lib/states'
 import { formatUSD } from '@/lib/format'
 import type { ReportField } from '@/lib/report'
-import { SelectField, MoneyField, NumberField, toNumber } from './fields'
+import { SelectField, MoneyField, NumberField, toNumber, Spinner, StaleNote } from './fields'
 
 type Option = { value: string; label: string }
 const optionLabel = (opts: Option[], v: string) => opts.find((o) => o.value === v)?.label ?? v
@@ -37,6 +37,8 @@ interface Values {
 export default function PainSufferingForm({ config }: { config: CalculatorConfig }) {
   const { presets } = config
   const [result, setResult] = useState<PainSufferingResult | null>(null)
+  const [calculating, setCalculating] = useState(false)
+  const [stale, setStale] = useState(false)
   const [values, setValues] = useState<Values>({
     method: 'multiplier',
     medicalBills: '',
@@ -52,7 +54,7 @@ export default function PainSufferingForm({ config }: { config: CalculatorConfig
 
   function setField<K extends keyof Values>(key: K, value: Values[K]) {
     setValues((prev) => ({ ...prev, [key]: value }))
-    setResult(null)
+    if (result) setStale(true)
   }
 
   const economicDamages =
@@ -60,19 +62,23 @@ export default function PainSufferingForm({ config }: { config: CalculatorConfig
 
   function handleCalculate(e: React.FormEvent) {
     e.preventDefault()
-    setResult(
-      calculatePainSuffering({
-        method: values.method,
-        economicDamages,
-        severity: values.severity,
-        permanent: values.permanent === 'yes',
-        dailyRate: toNumber(values.dailyRate),
-        recoveryDays: toNumber(values.recoveryDays),
-        faultLevel: values.faultLevel,
-        negligenceRule: negligenceRuleForState(values.state),
-        noFaultGate: values.method === 'multiplier' && gatesPainSuffering(values.state, values.severity),
-      }),
-    )
+    const input = {
+      method: values.method,
+      economicDamages,
+      severity: values.severity,
+      permanent: values.permanent === 'yes',
+      dailyRate: toNumber(values.dailyRate),
+      recoveryDays: toNumber(values.recoveryDays),
+      faultLevel: values.faultLevel,
+      negligenceRule: negligenceRuleForState(values.state),
+      noFaultGate: values.method === 'multiplier' && gatesPainSuffering(values.state, values.severity),
+    }
+    setCalculating(true)
+    setTimeout(() => {
+      setResult(calculatePainSuffering(input))
+      setCalculating(false)
+      setStale(false)
+    }, 900)
   }
 
   function buildFields(): ReportField[] {
@@ -155,15 +161,24 @@ export default function PainSufferingForm({ config }: { config: CalculatorConfig
 
           <button
             type="submit"
-            className="mt-6 w-full rounded-lg bg-ink px-5 py-3 font-semibold text-white transition hover:opacity-90"
+            disabled={calculating}
+            className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-ink px-5 py-3 font-semibold text-white transition hover:opacity-90 disabled:opacity-80"
           >
-            Calculate pain &amp; suffering
+            {calculating ? (
+              <>
+                <Spinner />
+                Calculating…
+              </>
+            ) : (
+              <>Calculate pain &amp; suffering</>
+            )}
           </button>
         </form>
       </section>
 
       <aside className="lg:col-span-2">
         <div className="lg:sticky lg:top-6">
+          {stale && result && !calculating && <StaleNote />}
           {result ? (
             <PsResultCard
               result={result}
