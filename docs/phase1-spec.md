@@ -111,3 +111,98 @@ high          = round(total * 1.25)
   partial disability. Why there is no pain and suffering. The state-maximum
   caveat. Lump-sum vs structured settlements. Two or three worked examples. Steps
   to take. Five or six FAQs.
+
+## Neck injury settlement calculator
+
+- **Target keyword.** "neck injury settlement calculator" (KD 2, US volume 300,
+  traffic potential 1.9K). Low direct volume but high traffic potential because
+  the #1 page is a broad neck-and-back article, not a calculator. Parent topic:
+  "average settlement for car accident back and neck injury" (3.4K). Traffic sits
+  in content clusters: diagnosis and spinal-level terms (7.9K), average and
+  how-much terms (7.8K), surgery (3.2K), workers comp (2.5K), and calculator
+  terms only 720.
+- **Slug / URL.** `/neck-injury-settlement-calculator`.
+- **H1.** "Neck and Back Injury Settlement Calculator" (calculator-first, an
+  operator decision). Big informational keywords are captured as exact-match H2s
+  rather than in the H1.
+- **Purpose-built angle.** No competitor models surgery status or spinal level,
+  yet those are the highest-volume modifiers in the cluster. The tool makes
+  diagnosis, treatment (surgery status), the number of affected levels, and the
+  spinal level drive the multiplier. Gaps to exploit: "back injury settlement
+  without surgery" (1.8K, KD 0, mileylegal ranks only #9) and spinal-level terms
+  (C4-C5 700, C5-C6-C7 250) that the leading article never itemizes.
+- **Inputs.** Diagnosis (whiplash / soft tissue, bulging disc, herniated disc,
+  radiculopathy / pinched nerve, spinal stenosis, fracture / spinal cord),
+  treatment (conservative care only, injections, discectomy, single-level fusion,
+  multi-level fusion), number of affected levels, spinal level (C4-C5, C5-C6,
+  C6-C7, L4-L5, L5-S1), permanent impairment yes/no, medical bills, future
+  medical, lost wages, future lost income, other costs, state, fault level.
+- **Formula (engine adjustments).** Multiplier = diagnosis base + surgery bump +
+  levels bump + permanence, clamped to a 1.5 to 7 range. General damages =
+  economic damages times the multiplier. Comparative fault applied by state. A
+  no-fault gate suppresses inflated values for minor soft-tissue claims. Final
+  output is a range of plus or minus 25%.
+- **Content outline (exact-match H2s).** How a neck or back injury settlement is
+  calculated. Neck and back injury settlement without surgery. Average settlement
+  for a car accident back and neck injury (cite the mileylegal 702-case study
+  with attribution, and explain the average $925,169 vs median $316,000 skew; do
+  not present it as our own data). How much is a 2-level herniated disc
+  settlement. C4-C5, C5-C6 and C6-C7 settlements. Spinal stenosis, radiculopathy
+  and pinched nerve. Workers comp neck and back settlements (cross-link
+  `/workers-comp-settlement-calculator`). Worked examples. How your state changes
+  the number. Steps after a neck or back injury.
+
+## Wrongful death settlement calculator
+
+- **Target keyword.** "wrongful death settlement calculator" (KD 0, US volume
+  400, traffic potential 1.4K). Very easy, few referring domains. The #1 result,
+  scheuermanlaw, earns most of its traffic from the average and how-much cluster
+  (3.2K volume) rather than the calculator term itself (1.1K).
+- **Slug / URL.** `/wrongful-death-settlement-calculator`.
+- **H1.** "Wrongful Death Settlement Calculator".
+- **Purpose-built angle.** No competitor does the two things that actually drive
+  a wrongful death number: present-value discounting of lost future earnings and
+  a personal-consumption deduction (the share the deceased would have spent on
+  themselves). The tool adds both, plus loss of household services, a punitive
+  uplift for egregious conduct, comparative fault by state (contributory-negligence
+  states can bar recovery entirely), and an insurance-coverage ceiling.
+- **Inputs.** State, age at death, annual income, years until retirement,
+  relationship to the survivor, number of dependents, and the deceased's share of
+  fault (percent). Advanced inputs add life expectancy (default 78), health
+  status, medical expenses before death, funeral costs (default $10,000),
+  household service hours per week, childcare hours per week, home maintenance,
+  defendant conduct, punitive eligibility, and primary, umbrella, and UM/UIM
+  coverage limits.
+- **Content outline (exact-match H2s).** How a wrongful death settlement is
+  calculated. Average wrongful death settlement (cite the Thomson Reuters figures
+  as reported by a law firm: average $973,054 vs median $294,728, and explain the
+  skew; do not present these as our own data). Wrongful death settlement amounts
+  by age and income. Who can file a wrongful death claim. Economic vs non-economic
+  vs punitive damages. Wrongful death vs a survival action. How your state changes
+  the number (contributory negligence, damages caps). Statute of limitations.
+  Worked examples. Steps to take.
+
+## Medical malpractice settlement calculator
+
+- **Target keyword.** "medical malpractice settlement calculator" (KD 5, US
+  volume 250, traffic potential 300). About six referring domains to reach the top
+  ten. The #1 result, amicusplanners, is a thin 949-word three-step wizard.
+- **Slug / URL.** `/medical-malpractice-settlement-calculator`.
+- **H1.** "Medical Malpractice Settlement Calculator".
+- **Purpose-built angle.** Med-mal turns on causation: only the ADDITIONAL harm
+  caused by the negligence is compensable, not the cost of the underlying
+  condition the patient already had. The tool separates original medical costs
+  (shown for contrast, excluded from damages) from the additional costs caused by
+  the malpractice, applies the state non-economic damage cap (which bites hardest
+  in med-mal), and reports a net figure after the attorney contingency fee (med-mal
+  fees run about 33 to 40 percent, and several states cap them by statute).
+- **Inputs.** Original medical expenses (excluded from damages, shown for
+  contrast), additional medical expenses caused by the malpractice, lost wages,
+  caregiver and life-care costs, malpractice type, resulting injury severity,
+  recovery duration, state, and attorney contingency fee percent.
+- **Outputs.** Economic damages, non-economic damages, gross range, net range
+  after fees, plus a state-cap warning.
+- **Content outline.** How medical malpractice settlements are calculated. Why
+  only the additional harm counts (causation). Average medical malpractice
+  settlement amounts. Damage caps by state. Birth injury, surgical error, and
+  misdiagnosis. Net vs gross after attorney fees. Worked examples.

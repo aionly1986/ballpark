@@ -9,6 +9,8 @@ import CarAccidentForm from '@/components/CarAccidentForm'
 import DogBiteForm from '@/components/DogBiteForm'
 import TruckAccidentForm from '@/components/TruckAccidentForm'
 import WorkersCompForm from '@/components/WorkersCompForm'
+import NeckInjuryForm from '@/components/NeckInjuryForm'
+import WrongfulDeathForm from '@/components/WrongfulDeathForm'
 import FaqSection from '@/components/FaqSection'
 import TrustBadge from '@/components/TrustBadge'
 
@@ -75,6 +77,10 @@ export default async function CalculatorPage({ params }: PageProps) {
         <TruckAccidentForm config={config} />
       ) : config.form === 'workersComp' ? (
         <WorkersCompForm config={config} />
+      ) : config.form === 'neckInjury' ? (
+        <NeckInjuryForm config={config} />
+      ) : config.form === 'wrongfulDeath' ? (
+        <WrongfulDeathForm config={config} />
       ) : (
         <CalculatorForm config={config} />
       )}

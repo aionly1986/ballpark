@@ -70,7 +70,15 @@ export interface CalculatorConfig {
    * dedicated multiplier/per-diem pain-and-suffering form; 'dogBite',
    * 'truckAccident', and 'workersComp' each have their own form and engine.
    */
-  form?: 'settlement' | 'painSuffering' | 'carAccident' | 'dogBite' | 'truckAccident' | 'workersComp'
+  form?:
+    | 'settlement'
+    | 'painSuffering'
+    | 'carAccident'
+    | 'dogBite'
+    | 'truckAccident'
+    | 'workersComp'
+    | 'neckInjury'
+    | 'wrongfulDeath'
   /** Labels for the nine input fields. */
   labels: InputLabels
   /** Options for the select-style inputs. */
