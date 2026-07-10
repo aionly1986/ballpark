@@ -11,6 +11,10 @@ import TruckAccidentForm from '@/components/TruckAccidentForm'
 import WorkersCompForm from '@/components/WorkersCompForm'
 import NeckInjuryForm from '@/components/NeckInjuryForm'
 import WrongfulDeathForm from '@/components/WrongfulDeathForm'
+import HerniatedDiscForm from '@/components/HerniatedDiscForm'
+import MedMalpracticeForm from '@/components/MedMalpracticeForm'
+import BrainInjuryForm from '@/components/BrainInjuryForm'
+import CampLejeuneForm from '@/components/CampLejeuneForm'
 import FaqSection from '@/components/FaqSection'
 import TrustBadge from '@/components/TrustBadge'
 
@@ -81,6 +85,14 @@ export default async function CalculatorPage({ params }: PageProps) {
         <NeckInjuryForm config={config} />
       ) : config.form === 'wrongfulDeath' ? (
         <WrongfulDeathForm config={config} />
+      ) : config.form === 'herniatedDisc' ? (
+        <HerniatedDiscForm config={config} />
+      ) : config.form === 'medMalpractice' ? (
+        <MedMalpracticeForm config={config} />
+      ) : config.form === 'brainInjury' ? (
+        <BrainInjuryForm config={config} />
+      ) : config.form === 'campLejeune' ? (
+        <CampLejeuneForm config={config} />
       ) : (
         <CalculatorForm config={config} />
       )}

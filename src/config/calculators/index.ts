@@ -7,6 +7,10 @@ import { truckAccident } from './truck-accident'
 import { workersComp } from './workers-comp'
 import { neckInjury } from './neck-injury'
 import { wrongfulDeath } from './wrongful-death'
+import { herniatedDisc } from './herniated-disc'
+import { medicalMalpractice } from './medical-malpractice'
+import { brainInjury } from './brain-injury'
+import { campLejeune } from './camp-lejeune'
 
 // Registry of every calculator. Add one line here when you add a new config.
 export const allCalculators: CalculatorConfig[] = [
@@ -18,6 +22,10 @@ export const allCalculators: CalculatorConfig[] = [
   workersComp,
   neckInjury,
   wrongfulDeath,
+  herniatedDisc,
+  medicalMalpractice,
+  brainInjury,
+  campLejeune,
 ]
 
 const bySlug = new Map(allCalculators.map((c) => [c.slug, c]))

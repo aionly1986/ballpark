@@ -72,7 +72,14 @@ export async function downloadEstimatePdf(report: EstimateReport): Promise<void>
   doc.text(report.headlineLabel.toUpperCase(), M, y)
   y += 24
   doc.setFont('helvetica', 'bold').setFontSize(22).setTextColor(...ink)
-  doc.text(`${usd.format(report.headlineLow)} to ${usd.format(report.headlineHigh)}`, M, y)
+  // Most tools produce a range. The Camp Lejeune Elective Option is a published
+  // schedule, so it produces one exact figure. Print it as one figure, not a
+  // range from a number to itself.
+  const headline =
+    report.headlineLow === report.headlineHigh
+      ? usd.format(report.headlineLow)
+      : `${usd.format(report.headlineLow)} to ${usd.format(report.headlineHigh)}`
+  doc.text(headline, M, y)
   y += 22
   doc.setFont('helvetica', 'normal').setFontSize(11).setTextColor(...soft)
   for (const b of report.breakdown) {

@@ -79,6 +79,10 @@ export interface CalculatorConfig {
     | 'workersComp'
     | 'neckInjury'
     | 'wrongfulDeath'
+    | 'herniatedDisc'
+    | 'medMalpractice'
+    | 'brainInjury'
+    | 'campLejeune'
   /** Labels for the nine input fields. */
   labels: InputLabels
   /** Options for the select-style inputs. */
